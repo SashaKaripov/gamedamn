@@ -1,28 +1,13 @@
 import pygame
+
+
+
+walk_a_w,walk_a_s,walk_d_s,walk_d_w,walk_a,walk_d,walk_s,walk_w, = [],[],[],[],[],[],[],[]         # Переменные
+fight_w,fight_s,fight_a, fight_d,fight_a_w,fight_a_s,fight_d_s,fight_d_w = [],[],[],[],[],[],[],[]
+fire = []
 clock = pygame.time.Clock()
 bg = pygame.image.load("project\_floor\_flooor.png")
 screen = pygame.display.set_mode((800, 600))
-walk_a_w,walk_a_s,walk_d_s,walk_d_w,walk_a,walk_d,walk_s,walk_w, = [],[],[],[],[],[],[],[]
-fire = []
-fight_w,fight_s,fight_a, fight_d,fight_a_w,fight_a_s,fight_d_s,fight_d_w = [],[],[],[],[],[],[],[]
-for i in '12345678':
-    for r in range(4):
-        walk_a_w.append(pygame.image.load("project\_aw\слой-"+i+'.png'))
-        walk_a_s.append(pygame.image.load("project\_as\слой-"+i+'.png'))
-        walk_d_s.append(pygame.image.load("project\ds\слой-"+i+'.png'))
-        walk_d_w.append(pygame.image.load("project\dw\слой-"+i+'.png'))
-        walk_a.append(pygame.image.load("project\_a\слой-"+i+'.png'))
-        walk_w.append(pygame.image.load("project\w\слой-"+i+'.png'))
-        walk_d.append(pygame.image.load("project\d\слой-"+i+'.png'))
-        walk_s.append(pygame.image.load("project\s\слой-"+i+'.png'))
-    for r in range(6):
-        fight_w.append(pygame.image.load("project\_fight\w\_"+i+".png"))
-        fight_a.append(pygame.image.load("project\_fight\_a\_"+i+".png"))
-        fight_s.append(pygame.image.load("project\_fight\s\_"+i+".png"))
-        fight_d.append(pygame.image.load("project\_fight\d\_"+i+".png"))
-for i in range(16):
-    for r in range(4):
-        fire.append(pygame.image.load("project\_fire\слой-"+str(i+1)+'.png'))
 walk_off = pygame.image.load("project\stay\слой-1.png")
 player_anime_count = 0
 fire_anime_count = 0
@@ -30,24 +15,58 @@ fight_anime_count = 0
 fight_anime_count_a = 0
 fight_anime_1 = 0
 bg_x = 0
-ff = 0
+repeat_walk_anim = 0
+repeat_fight_anim = 0
+repeat_fire_anim = 0
 player_speed = 5
 player_x = 150
 player_y = 150
-is_jump = False
-jump_count = 5
 running = True
+
+
+
+for i in '12345678':                                                                                # Массивы с покадровой анимацией
+    walk_a_w.append(pygame.image.load("project\_aw\слой-"+i+'.png'))
+    walk_a_s.append(pygame.image.load("project\_as\слой-"+i+'.png'))
+    walk_d_s.append(pygame.image.load("project\ds\слой-"+i+'.png'))
+    walk_d_w.append(pygame.image.load("project\dw\слой-"+i+'.png'))
+    walk_a.append(pygame.image.load("project\_a\слой-"+i+'.png'))
+    walk_w.append(pygame.image.load("project\w\слой-"+i+'.png'))
+    walk_d.append(pygame.image.load("project\d\слой-"+i+'.png'))
+    walk_s.append(pygame.image.load("project\s\слой-"+i+'.png'))
+    fight_w.append(pygame.image.load("project\_fight\w\_"+i+".png"))
+    fight_a.append(pygame.image.load("project\_fight\_a\_"+i+".png"))
+    fight_s.append(pygame.image.load("project\_fight\s\_"+i+".png"))
+    fight_d.append(pygame.image.load("project\_fight\d\_"+i+".png"))
+for i in range(16):
+    fire.append(pygame.image.load("project\_fire\слой-"+str(i+1)+'.png'))
+
+
+
+
 while running:
     pygame.display.update()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
     screen.blit(bg, (bg_x, 0))
-    for i in [(-70,230),(350,-100),(780,230),(355,560)]:
-        
-        screen.blit(fire[fire_anime_count-1], i)
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_w] and keys[pygame.K_e]:
+
+
+
+    if keys[pygame.K_w] or keys[pygame.K_s] or keys[pygame.K_a] or keys[pygame.K_d]:              # Счётчики задаржки кадров анимации
+        repeat_walk_anim += 1
+        repeat_fight_anim += 1
+    repeat_fire_anim += 1
+
+
+
+    for i in [(-70,230),(350,-100),(780,230),(355,560)]:                                          # Анимация огня
+        screen.blit(fire[fire_anime_count-1], i)
+
+
+
+    if keys[pygame.K_w] and keys[pygame.K_e]:                                                     # Анимация ударов
         if fight_anime_1 < 15:
             screen.blit(fight_w[0], (player_x, player_y))
         else:
@@ -67,7 +86,10 @@ while running:
             screen.blit(fight_d[0], (player_x, player_y))
         else:
             screen.blit(fight_d[fight_anime_count-1], (player_x, player_y))
-    elif keys[pygame.K_a]:
+
+
+
+    elif keys[pygame.K_a]:                                                                        # Анимация передвижения
         screen.blit(walk_a[player_anime_count-1], (player_x, player_y))
     elif keys[pygame.K_d]:
         screen.blit(walk_d[player_anime_count-1], (player_x, player_y))
@@ -86,7 +108,9 @@ while running:
     else:
         screen.blit(walk_off, (player_x, player_y))
 
-    if not(keys[pygame.K_e]):
+
+
+    if not(keys[pygame.K_e]):                                                                     # Передвижение
         fight_anime_count = 0
         fight_anime_1 = 0
         if keys[pygame.K_a] and keys[pygame.K_w] and player_x > 40 and player_y > 40:
@@ -112,8 +136,18 @@ while running:
     else:
         fight_anime_1+=1
 
-    player_anime_count += (1*(player_anime_count != 32)-player_anime_count*(player_anime_count == 32))
-    fight_anime_count += (1*(fight_anime_count != 48)-fight_anime_count*(fight_anime_count == 48))
-    fire_anime_count += (1*(fire_anime_count != 64)-fire_anime_count*(fire_anime_count == 64))
 
-    clock.tick(60)
+
+    if repeat_walk_anim == 4:                                                                       # Измения счётчиков задержки кадров анимации
+        player_anime_count += (1*(player_anime_count != 8)-player_anime_count*(player_anime_count == 8))
+        repeat_walk_anim = 0
+    if repeat_fight_anim == 6:
+        fight_anime_count += (1*(fight_anime_count != 8)-fight_anime_count*(fight_anime_count == 8))
+        repeat_fight_anim = 0
+    if repeat_fire_anim == 4:
+        fire_anime_count += (1*(fire_anime_count != 16)-fire_anime_count*(fire_anime_count == 16))
+        repeat_fire_anim = 0
+
+
+
+    clock.tick(60)                                                                                  # Установка задержки
