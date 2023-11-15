@@ -1,4 +1,5 @@
 import pygame
+import random
 
 
 
@@ -8,7 +9,7 @@ fire = []
 clock = pygame.time.Clock()
 bg = pygame.image.load("project\_floor\_flooor.png")
 screen = pygame.display.set_mode((800, 600))
-walk_off = pygame.image.load("project\stay\слой-1.png")
+walk_off = pygame.image.load("project\_stay\слой-1.png")
 player_anime_count = 0
 fire_anime_count = 0
 fight_anime_count = 0
@@ -149,5 +150,28 @@ while running:
         repeat_fire_anim = 0
 
 
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load("enemy.png")  # Replace "enemy.png" with the actual enemy model file
+        self.rect = self.image.get_rect()
+        self.rect.center = (random.randint(0,800), random.randint(0,600))
 
-    clock.tick(60)                                                                                  # Установка задержки
+    def update(self, player):
+        # Move the enemy towards the player
+        dx = player.rect.centerx - self.rect.centerx
+        dy = player.rect.centery - self.rect.centery
+        distance = max(abs(dx), abs(dy))
+        if distance > 0:
+            speed = 2
+            self.rect.x += dx * speed / distance
+            self.rect.y += dy * speed / distance
+all_sprites = pygame.sprite.Group()
+spawner_positions = [(800 // 2, 0), (800, 600 // 2),
+                     (800 // 2, 600), (0, 600 // 2)]
+for position in spawner_positions:
+    spawner = Enemy()
+    spawner.rect.center = position
+    all_sprites.add(spawner)
+
+clock.tick(60)
