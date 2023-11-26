@@ -119,7 +119,7 @@ window = pygame.display.set_mode(window_size)
 pygame.display.set_caption("Game Menu")
 
 # Создание меню
-background_image = pygame.image.load("gamedamn\menubg\menu.jpg")
+background_image = pygame.image.load("gamedamn\menubg\menu3.jpg")
 play_button_image = pygame.image.load("gamedamn\menubuttons\play_250x62.png")
 quit_button_image = pygame.image.load("gamedamn\menubuttons\quit_250x62.png")
 play_button_pos = (window_width // 2 - play_button_image.get_width() // 2, 300)
